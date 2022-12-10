@@ -1,0 +1,9 @@
+[remote_servers]
+192.168.56.105
+
+[centosserver]
+192.168.56.109
+
+[ubuntuserver]
+192.168.56.105
+

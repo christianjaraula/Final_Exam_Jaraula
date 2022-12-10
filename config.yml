@@ -1,0 +1,91 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates  centos
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates ubuntu
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+##################UBUNTU##########################
+- hosts: ubuntuserver
+  become: true
+  tasks:
+
+  - name: Installing Nagios in Ubuntu
+    apt:
+      name: nagios4
+      state: present
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Start Nagios in Ubuntu
+    service:
+      name: nagios
+      state: restarted
+      enabled: true
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Installing Apache in Ubuntu
+    apt:
+      name: apache2
+      state: present
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Start Apache in Ubuntu
+    service:
+      name: apache2
+      state: restarted
+      enabled: true
+    when: ansible_distribution == "Ubuntu"
+
+#####################CENTOS##########################
+- hosts: centosserver
+  become: true
+  tasks:
+
+  - name: Installing Nagios CentOS
+    dnf:
+      name: nagios
+      state: present
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: Start Nagios in CentOS
+    service:
+      name: nagios
+      state: restarted
+      enabled: true
+    when: ansible_distribution == "CentOS"
+
+
+  - name: Installing Http in CentOS
+    dnf:
+      name: httpd
+      state: present
+    when: ansible_distribution == "CentOS"
+
+  - name: Start Http in CentOS
+    service:
+      name: httpd
+      state: restarted
+      enabled: true
+    when: ansible_distribution == "CentOS"
+
+  - name: Configure firewall 
+    shell: sudo firewall-cmd --permanent --add-port=80/tcp
+##################BANNERMOTD#######################
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Creating Banner Motd
+    debug:
+     msg: "Ansible Managed node by Jaraula"
